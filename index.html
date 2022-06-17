@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="css/estilos.css">
+  </head>
+
+  <body class="bg-light">
+
+    <div class="container">
+      <div class="jumbotron p-31 p-md-2 text-white rounded bg-dark">
+        <div class="py-5 text-center">
+        <h2>Agenda</h2>
+        <p class="lead">Código criado para o  <a href="https://serfrontend.com/cursos/bootstrap-4-jquery/index.html" class="text-light"> Curso completo de Bootstrap 4 + jQuery</a></p>
+      </div>
+      </div>
+      
+
+      <div class="row">
+        
+        <div class="col-sm">
+          <h4 class="mb-3">Agenda de contatos</h4>
+
+          <form>
+            <div class="row">
+              <div class="col-md-6 mb-3 col-lg-3">
+                <label for="name">Nome</label>
+                <input type="text" class="form-control" id="name" autocomplete="off" >                
+              </div>
+              <div class="col-md-6 mb-3 col-lg-3">
+                <label for="username">Usuário</label>
+                <input type="text" class="form-control" id="username" autocomplete="off">
+              </div>
+              <div class="col-md-6 mb-3 col-lg-3">
+                <label for="email">email</label>
+                <input type="email" class="form-control" id="email" autocomplete="off">
+              </div>
+              <div class="col-md-6 mb-3 col-lg-3 d-flex justify-content-end flex-column">
+                <button class="btn btn-primary btn-mds" type="submit">Cadastrar</button>
+              </div>
+            </div>            
+          </form>
+
+          <table class="table">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nome</th>
+                <th scope="col">Usuário</th>
+                <th scope="col">Email</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!--<tr>
+                 <th scope="row">1</th>
+                <td>Mark</td>
+                <td>Otto</td>
+                <td>@mdo</td>
+              </tr> -->
+              
+            </tbody>
+          </table>          
+        </div>
+      </div>
+
+      <footer class="my-5 pt-5 text-muted text-center text-small">
+        <p class="mb-1">&copy; serfrontend.com</p>
+        <ul class="list-inline">
+          <li class="list-inline-item"><a href="https://serfrontend.com/blog/">Blog</a></li>
+          <li class="list-inline-item"><a href="https://serfrontend.com/cursos/">Cupons de desconto</a></li>
+        </ul>
+      </footer>
+    </div>
+
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous">
+    
+    //ajax só funciona em servidores http
+
+
+    </script>
+
+  <script>window.jQuery || document.write('<script src="js/jquery-3.3.1.min.js"><\/script>')</script>
+    
+
+  <script>
+
+    $(function(){
+      const tbody = $('.table tbody')
+
+      function obterDados(){ //vai ser responsável por fazer a requisição no servidor que retorna o json
+
+        $.ajax('https://jsonplaceholder.typicode.com/users', {
+          type: 'GET',
+          beforeSend: function(){ //será chamada antes da requisição ser executada
+            $('.table').after('<p class="loading"> Carregando ...</p>')
+          },
+          error: function() {
+            $('.table').after('<p class="error"> Azedou!!! ...</p>')
+          },
+          success: function(dados) {
+            mostraDados(dados)
+          },
+          complete: function(){
+              $('.loading').remove()
+          }
+        }
+        )
+
+        
+      }
+
+      obterDados()
+
+      function mostraDados(dados){
+          $.each(dados, function(i, el){
+            tbody.append(`
+            <tr>
+                 <th scope="row">${el.id}</th>
+                 <td>${el.name}</td>
+                 <td>${el.username}</td>
+                 <td>${el.email}</td>
+              </tr>
+
+            `)
+          })
+        }
+
+        $('form').on('submit', function(e){
+          e.preventDefault();
+          const dados = {};
+
+          $('form').find('input').each(function(i, el){ //esse elemento é um objetivo nativo do dom
+            dados[el.id] = el.value;
+          })
+
+          $.ajax('https://jsonplaceholder.typicode.com/users_er', {
+            type: 'POST',
+            data: dados,
+            success: function(_dados){
+              console.log(_dados)
+              mostraDados([_dados]) //vai fazer um POST FAKE
+              alert('Sucesso !!!')
+              //JSON.parse('{"foo":"bar"}') //vai retornar um objeto
+              //JSON.stringify({"foo":"bar"}) //vai retornar uma string que representa um objeto
+            
+            },
+            error: function(){
+              alert('Erro!!!')
+            }
+          })
+        })
+
+      obterDados();
+    })
+  </script>
+
+
+  </body>
+</html>
